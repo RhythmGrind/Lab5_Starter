@@ -1,38 +1,47 @@
 // explore.js
-const speechSynthesis = window.speechSynthesis;
 window.addEventListener('DOMContentLoaded', init);
 
 function init() {
-  const voices = speechSynthesis.getVoices();
-  for (const voice of voices) {
-    const option = document.createElement("option");
-    option.value = voice.name;
-    option.textContent = voice.name;
-    document.getElementById("voice-select").appendChild(option);
-  }
-  // Set the default voice.
-  const defaultVoice = voices[0];
-  document.getElementById("voice-select").value = defaultVoice.name;
-  // Set the event listener for the "Press to Talk" button.
-  document.getElementById("press-to-talk").addEventListener("click", speak);
 
-}
-function speak() {
-  // Get the text to speak.
-  const text = document.getElementById("text-to-speak").value;
+  const select = document.getElementById('voice-select');
+  const synth  = window.speechSynthesis;
+  const img    = document.querySelector('img');
+  let voices=[];
 
-  // Get the selected voice.
-  const voice = document.getElementById("voice-select").value;
+  synth.addEventListener('voiceschanged',function(){
+    voices = speechSynthesis.getVoices();
+    for (let i = 0; i < voices.length; i++) {
+      const option = document.createElement('option');
+      option.textContent = `${voices[i].name} (${voices[i].lang})`;
 
-  // Create a new SpeechSynthesisUtterance object.
-  const utterance = new SpeechSynthesisUtterance(text);
+      if (voices.default) {
+        option.textContent += ' — DEFAULT';
+      }
 
-  // Set the voice of the utterance.
-  utterance.voice = voice;
+      option.setAttribute('data-lang', voices[i].lang);
+      option.setAttribute('data-name', voices[i].name);
+      select.appendChild(option);
+    }
 
-  // Speak the utterance.
-  speechSynthesis.speak(utterance);
+});
 
-  // Change the face to open mouthed.
-  document.getElementById("smiling").src = "assets/images/smiling.png";
+
+  document.querySelector("button").addEventListener("click", function() {
+    const utterThis = new SpeechSynthesisUtterance(document.querySelector('#text-to-speak').value);
+    const selectedOption = select.selectedOptions[0].getAttribute("data-name");
+    for (let i = 0; i < voices.length; i++) {
+      if (voices[i].name === selectedOption) {
+        utterThis.voice = voices[i];
+      }
+    }
+
+    utterThis.addEventListener('start',function(){
+      img.src = `assets/images/smiling-open.png`;
+    });
+    utterThis.addEventListener('end',function(){
+      img.src = `assets/images/smiling.png`;
+    });
+
+    synth.speak(utterThis);
+  });
 }

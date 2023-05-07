@@ -7,7 +7,7 @@ function init() {
   const selectElement = document.getElementById("horn-select");
   const audioElement = document.querySelector("audio");
   const imageElements = document.querySelectorAll("img");
-  const volumeElement = Number(document.getElementById("volume"));
+  let volumeElement = document.getElementById("volume");
   const iconElement = document.querySelector("input + img");
 
   selectElement.addEventListener("change", () => {

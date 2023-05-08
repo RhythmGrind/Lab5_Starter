@@ -6,20 +6,18 @@ function init() {
   const jsConfetti = new JSConfetti()
   const selectElement = document.getElementById("horn-select");
   const audioElement = document.querySelector("audio");
-  const imageElements = document.querySelectorAll("img");
+  const imageElements = document.querySelector("img");
   let volumeElement = document.getElementById("volume");
   const iconElement = document.querySelector("input + img");
 
   selectElement.addEventListener("change", () => {
     const selectedValue = selectElement.value;
-    for(const imageElement of imageElements) {
-      imageElement.src = `assets/images/${selectedValue}.svg`;
-    }
+    imageElements.src = `assets/images/${selectedValue}.svg`;
     audioElement.src = `assets/audio/${selectedValue}.mp3`;
   });
 
 //volume slider
-  volumeElement.addEventListener("change", () => {
+  volumeElement.addEventListener("input", () => {
     const currentVolume = volumeElement.value;
     let level = 3;
     if (currentVolume == 0) {
